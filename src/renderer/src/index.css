@@ -246,6 +246,19 @@ button { cursor: pointer; }
 }
 .input-deadline:focus { border-color: var(--text2); }
 
+.input-estimate {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 5px 8px;
+  color: var(--text);
+  font-size: 12px;
+  outline: none;
+  width: 70px;
+}
+.input-estimate::placeholder { color: var(--text3); }
+.input-estimate:focus { border-color: var(--text2); }
+
 .tag-input-wrapper {
   flex: 1;
   display: flex;
@@ -403,6 +416,7 @@ button { cursor: pointer; }
   color: var(--text3);
   cursor: default;
 }
+.task-title--prelim { text-decoration: underline; }
 
 .task-title-edit {
   width: 100%;
@@ -638,3 +652,102 @@ kbd {
   line-height: 1;
 }
 .tag-discard-btn:hover { color: var(--text2); }
+
+/* ─── Progress Slider ────────────────────────────────── */
+.task-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 1px 0;
+}
+
+.task-progress-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(
+    to right,
+    var(--text2) 0%,
+    var(--text2) var(--pct, 0%),
+    var(--bg4) var(--pct, 0%),
+    var(--bg4) 100%
+  );
+  transition: background 0.1s;
+}
+
+.task-progress-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--text);
+  border: 2px solid var(--bg2);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px var(--border2);
+  transition: transform 0.12s, background 0.12s;
+}
+
+.task-progress-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+  background: #fff;
+}
+
+.task-progress-slider::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--text);
+  border: 2px solid var(--bg2);
+  cursor: pointer;
+  box-shadow: 0 0 0 1px var(--border2);
+}
+
+/* Time-left label (estimate-based or deadline countdown) */
+.task-time-left {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.task-time-left--calm     { color: var(--calm); }
+.task-time-left--aware    { color: var(--aware); }
+.task-time-left--urgent   { color: var(--urgent); }
+.task-time-left--critical { color: var(--critical); }
+.task-time-left--alarm    { color: var(--critical); }
+.task-time-left--overdue  { color: #f87171; }
+.task-time-left--someday  { color: var(--text2); }
+
+/* Estimate button / input in task card */
+.task-estimate-btn {
+  background: none;
+  border: none;
+  color: var(--text3);
+  font-size: 11px;
+  padding: 0;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.12s;
+  flex-shrink: 0;
+}
+.task-estimate-btn:hover { color: var(--text2); }
+.task-estimate-btn--empty { opacity: 0.35; }
+.task-estimate-btn--empty:hover { opacity: 0.7; }
+
+.task-estimate-input {
+  width: 52px;
+  background: var(--bg3);
+  border: 1px solid var(--text2);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--text);
+  font-size: 11px;
+  outline: none;
+  flex-shrink: 0;
+}

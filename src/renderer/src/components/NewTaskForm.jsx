@@ -17,6 +17,7 @@ export default function NewTaskForm() {
   const [title, setTitle]       = useState('')
   const [deadline, setDeadline] = useState('')
   const [tags, setTags]         = useState([])
+  const [estimate, setEstimate] = useState('')
 
   const [showTagInput, setShowTagInput]     = useState(false)
   const [tagInput, setTagInput]             = useState('')
@@ -28,7 +29,7 @@ export default function NewTaskForm() {
   }
 
   function reset() {
-    setTitle(''); setDeadline(''); setTags([])
+    setTitle(''); setDeadline(''); setTags([]); setEstimate('')
     setShowTagInput(false); setTagInput(''); setPendingTagName(null)
     setOpen(false)
   }
@@ -38,7 +39,8 @@ export default function NewTaskForm() {
     await addTask({
       title: title.trim(),
       deadline: deadline ? new Date(deadline).getTime() : null,
-      tags
+      tags,
+      estimate: parseFloat(estimate) || 0
     })
     reset()
   }
@@ -101,6 +103,15 @@ export default function NewTaskForm() {
           className="input-deadline"
           value={deadline}
           onChange={e => setDeadline(e.target.value)}
+        />
+        <input
+          type="number"
+          min="0"
+          step="0.5"
+          className="input-estimate"
+          placeholder="hrs"
+          value={estimate}
+          onChange={e => setEstimate(e.target.value)}
         />
 
         <div className="tag-input-wrapper">

@@ -15,6 +15,11 @@ export default function TaskCard({ task }) {
   const [editTitle,    setEditTitle]    = useState(false)
   const [editDeadline, setEditDeadline] = useState(false)
   const [titleDraft,   setTitleDraft]   = useState(task.title)
+  const [editEstimate, setEditEstimate] = useState(false)
+  const [estimateDraft, setEstimateDraft] = useState(parseFloat(task.estimate) || '')
+  const [progressDraft, setProgressDraft] = useState(task.progress ?? 0)
+
+  const estimate = parseFloat(task.estimate) || 0
 
   const [showTagInput, setShowTagInput]     = useState(false)
   const [tagInput, setTagInput]             = useState('')
@@ -33,6 +38,28 @@ export default function TaskCard({ task }) {
     if (t && t !== task.title) updateTask({ id: task.id, title: t })
     else setTitleDraft(task.title)
     setEditTitle(false)
+  }
+
+  function saveEstimate() {
+    const e = parseFloat(estimateDraft) || 0
+    if (e !== (parseFloat(task.estimate) || 0)) updateTask({ id: task.id, estimate: e })
+    setEditEstimate(false)
+  }
+
+  function commitProgress() {
+    if (progressDraft !== (task.progress ?? 0))
+      updateTask({ id: task.id, progress: progressDraft })
+  }
+
+  function formatTimeLeft(hours) {
+    if (hours <= 0) return progressDraft === 100 ? 'Complete' : '0m left'
+    const totalMins = Math.round(hours * 60)
+    if (totalMins < 1) return '< 1m left'
+    const h = Math.floor(totalMins / 60)
+    const m = totalMins % 60
+    if (h > 0 && m > 0) return `${h}h ${m}m left`
+    if (h > 0) return `${h}h left`
+    return `${m}m left`
   }
 
   function handleDeadlineChange(e) {
@@ -100,12 +127,13 @@ export default function TaskCard({ task }) {
           />
         ) : (
           <div
-            className={`task-title${isDone ? ' task-title--done' : ''}`}
+            className={`task-title${isDone ? ' task-title--done' : ''}${task.title.toLowerCase().includes('prelim') ? ' task-title--prelim' : ''}`}
             onClick={() => !isDone && setEditTitle(true)}
           >
             {task.title}
           </div>
         )}
+
 
         {/* Meta: tags + deadline */}
         <div className="task-meta">
@@ -197,10 +225,52 @@ export default function TaskCard({ task }) {
           </div>
         )}
 
-        {/* Countdown */}
-        {countdown && (
-          <div className={`task-countdown task-countdown--${urgency}`}>
-            {countdown}
+        {/* Progress slider + time remaining (merged row) */}
+        {!isDone && (
+          <div className="task-progress-row">
+            {countdown && (
+              <span className={`task-time-left task-time-left--${urgency}`}>{countdown}</span>
+            )}
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={progressDraft}
+              className="task-progress-slider"
+              style={{ '--pct': `${progressDraft}%` }}
+              onChange={e => setProgressDraft(parseInt(e.target.value))}
+              onPointerUp={commitProgress}
+            />
+            <span className="task-time-left task-time-left--someday">
+              {estimate > 0
+                ? formatTimeLeft(estimate * (1 - progressDraft / 100))
+                : `${progressDraft}%`}
+            </span>
+            {editEstimate ? (
+              <input
+                type="number"
+                min="0"
+                step="0.5"
+                className="task-estimate-input"
+                value={estimateDraft}
+                placeholder="0"
+                autoFocus
+                onChange={e => setEstimateDraft(e.target.value)}
+                onBlur={saveEstimate}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') saveEstimate()
+                  if (e.key === 'Escape') { setEstimateDraft(parseFloat(task.estimate) || ''); setEditEstimate(false) }
+                }}
+              />
+            ) : (
+              <button
+                className={`task-estimate-btn${!estimate ? ' task-estimate-btn--empty' : ''}`}
+                onClick={() => setEditEstimate(true)}
+                title="Set estimate (hours)"
+              >
+                {estimate ? `${estimate}h` : '—h'}
+              </button>
+            )}
           </div>
         )}
       </div>

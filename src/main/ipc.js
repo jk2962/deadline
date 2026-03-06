@@ -29,13 +29,15 @@ export function registerIpcHandlers() {
     })
   )
 
-  ipcMain.handle('tasks:create', (_, { title, note, deadline, tags }) => {
+  ipcMain.handle('tasks:create', (_, { title, note, deadline, tags, estimate, progress }) => {
     const task = {
       id: randomUUID(), title,
       note: note || '',
       deadline: deadline ?? null,
       tags: tags || [],
       status: 'pending',
+      estimate: parseFloat(estimate) || 0,
+      progress: progress ?? 0,
       created_at: Date.now()
     }
     const tasks = readJSON(tasksPath)

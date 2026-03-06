@@ -29,7 +29,7 @@ function registerIpcHandlers() {
       return a.deadline - b.deadline;
     })
   );
-  electron.ipcMain.handle("tasks:create", (_, { title, note, deadline, tags }) => {
+  electron.ipcMain.handle("tasks:create", (_, { title, note, deadline, tags, estimate, progress }) => {
     const task = {
       id: crypto.randomUUID(),
       title,
@@ -37,6 +37,8 @@ function registerIpcHandlers() {
       deadline: deadline ?? null,
       tags: tags || [],
       status: "pending",
+      estimate: parseFloat(estimate) || 0,
+      progress: progress ?? 0,
       created_at: Date.now()
     };
     const tasks = readJSON(tasksPath);
